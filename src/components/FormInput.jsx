@@ -7,6 +7,7 @@ const FormInput = ({
   placeholder,
   value,
   onChange,
+  disabled = false,
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -23,6 +24,7 @@ const FormInput = ({
         onChange={onChange}
         className="text-lg border-2 border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent"
         {...(type === "number" && { min: "0.01", step: "0.01" })}
+        disabled={disabled}
       />
     </div>
   );

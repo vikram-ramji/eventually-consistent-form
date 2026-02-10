@@ -66,6 +66,7 @@ const Form = () => {
         placeholder="name@example.com"
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        disabled={status === "SUBMITTING" || status === "RETRYING"}
       />
       <FormInput
         label="Amount"
@@ -74,8 +75,9 @@ const Form = () => {
         placeholder="100.00"
         value={formData.amount}
         onChange={(e) =>
-          setFormData({ ...formData, amount: parseFloat(e.target.value) })
+          setFormData({ ...formData, amount: e.target.value })
         }
+        disabled={status === "SUBMITTING" || status === "RETRYING"}
       />
       <button
         type="submit"
