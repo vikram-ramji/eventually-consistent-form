@@ -1,16 +1,73 @@
-# React + Vite
+# Eventually Consistent Form
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React application designed to handle unreliable API connections with "eventually consistent" behavior. It features automatic retry logic for temporary failures, prevents duplicate submissions, and provides real-time user feedback through a finite state machine.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* **Resilient Submissions:** Automatically detects `503 Service Unavailable` errors and retries the request up to 3 times.
+* **Duplicate Prevention:** Implements a two-layer defense strategy to ensure no transaction is submitted twice.
+* **Smart Feedback:** The UI reflects the exact state of the request (e.g., "Processing...", "Retrying (1/3)...", "Success").
+* **Mock API:** Simulates real-world network conditions including delays (1.2s), random success (50%), temporary failures (40%), and delayed responses (10%).
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Framework:** React (Vite)
+* **Styling:** Tailwind CSS
+* **Language:** JavaScript (ES6+)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Architectural Decisions
+
+### 1. State Transitions
+
+The application uses a **Finite State Machine** pattern with the following specific states to manage the UI:
+
+* **`IDLE`**: The initial state. The form is editable and ready for input.
+* **`SUBMITTING`**: Triggered immediately when the user clicks "Submit". Inputs are disabled to prevent edits during flight.
+* **`RETRYING`**: Entered specifically when the API returns a `503` error. The UI updates to show the current attempt count (e.g., "Retrying 1/3"), informing the user that the system is self-healing.
+* **`SUCCESS`**: Entered when the API returns `200 OK`. A success message is displayed, and the form resets to `IDLE` after a short delay.
+* **`ERROR`**: Entered if the maximum retries are exceeded or a non-retriable error occurs.
+
+### 2. Retry Logic
+
+The core "eventually consistent" requirement is handled in the `handleSubmit` function using a controlled loop:
+
+* **Detection:** The logic specifically listens for status `503`. All other errors (e.g., 400, 500) fail immediately.
+* **Mechanism:** A `while` loop executes as long as `currentAttempt <= maxRetries`.
+* **Backoff:** A linear delay of 1 second (`1000ms`) is enforced between attempts to prevent overwhelming the server.
+* **Feedback:** The local variable `currentAttempt` drives the logic, while the state `attempts` drives the UI, ensuring the user sees progress in real-time.
+
+### 3. Duplicate Prevention
+
+To satisfy the requirement that "The user must never see duplicate records," a dual-guard strategy is implemented:
+
+1. **UI Guard:** The "Submit" button is strictly `disabled` whenever the status is `SUBMITTING` or `RETRYING`.
+2. **Logic Guard:** The submit handler includes an early return clause at the very top:
+
+    ```javascript
+    if (status === "SUBMITTING" || status === "RETRYING") {
+      return; // Stop execution immediately
+    }
+    ```
+
+    This guarantees that even if the UI is slow to update or a user triggers the function programmatically, a second request cannot be initiated while one is active.
+
+---
+
+## 📦 How to Run
+
+1. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+2. **Start the development server:**
+
+    ```bash
+    npm run dev
+    ```
+
+3. **Open the app:**
+    Visit `http://localhost:5173` in your browser.
