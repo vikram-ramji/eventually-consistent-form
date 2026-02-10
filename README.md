@@ -55,19 +55,42 @@ To satisfy the requirement that "The user must never see duplicate records," a d
 
 ---
 
-## 📦 How to Run
+## 🚀 Live Demo
 
-1. **Install dependencies:**
+[**Click here to view the live application**](YOUR_VERCEL_LINK_HERE)
+
+---
+
+## 💻 How to Run Locally
+
+If you want to run the project on your own machine:
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone [https://github.com/YOUR_USERNAME/eventually-consistent-form.git](https://github.com/YOUR_USERNAME/eventually-consistent-form.git)
+    cd eventually-consistent-form
+    ```
+
+2. **Install dependencies:**
 
     ```bash
     npm install
     ```
 
-2. **Start the development server:**
+3. **Start the development server:**
 
     ```bash
     npm run dev
     ```
 
-3. **Open the app:**
+4. **Open the app:**
     Visit `http://localhost:5173` in your browser.
+
+---
+
+## 🧪 Testing Guide
+
+Since the API is randomized, I added a manual override to help you test specific states quickly:
+
+* **Force 503 Error:** Use the email `error@test.com` to trigger an immediate Service Unavailable error (this allows you to verify the retry logic without waiting for random chance).

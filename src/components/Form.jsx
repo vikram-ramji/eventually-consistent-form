@@ -30,7 +30,7 @@ const Form = () => {
           setFormData({ email: "", amount: "" }); // Reset form on success
           setTimeout(() => {
             setStatus("IDLE");
-          }, 2000);
+          }, 3000);
           return;
         }
       } catch (e) {
@@ -44,7 +44,7 @@ const Form = () => {
           setStatus("ERROR");
           setTimeout(() => {
             setStatus("IDLE");
-          }, 2000);
+          }, 3000);
           return;
         }
 
