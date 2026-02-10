@@ -81,7 +81,7 @@ const Form = () => {
       />
       <button
         type="submit"
-        className="bg-gray-900 text-white font-bold text-lg py-3 rounded-lg mt-4 cursor-pointer hover:bg-gray-700 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+        className="bg-gray-900 text-white font-bold text-lg py-3 rounded-lg mt-4 cursor-pointer hover:bg-gray-700 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none"
         disabled={status === "SUBMITTING" || status === "RETRYING"}
       >
         {status === "SUBMITTING"
