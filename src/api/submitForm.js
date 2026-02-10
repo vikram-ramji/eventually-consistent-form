@@ -1,4 +1,4 @@
-const submitMockApi = async (formData) => {
+const submitForm = async (formData) => {
   const { email, amount } = formData;
 
   console.log(
@@ -9,6 +9,11 @@ const submitMockApi = async (formData) => {
   const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   await delay(1200);
+
+  // FORCED ERROR for testing
+  if (email === "error@test.com") {
+    throw {status: 503, message: "Service Unavailable (Forced Error)"};
+  }
 
   // For setting random probability
   const randomOutcome = Math.random();
@@ -30,4 +35,4 @@ const submitMockApi = async (formData) => {
   return { status: 200, message: "Success" };
 };
 
-export default submitMockApi;
+export default submitForm;
