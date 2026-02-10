@@ -23,7 +23,7 @@ const submitMockApi = async (formData) => {
 
   // TEMPORARY FAILURE - 40% chance
   if (randomOutcome < 0.5) {
-    return { status: 503, message: "Service Unavailable" };
+    throw { status: 503, message: "Service Unavailable" };
   }
 
   // SUCCESS - 50% chance
